@@ -321,8 +321,7 @@ return(function(Installer)
                 if Current == 'Sea3' then return 3 end 
             end
 
-            warn("[Module.Sea] MAP attribute not recognized:", tostring(workspace:GetAttribute('MAP')))
-            return "N/A"
+            return 1
         end)()
 
         Module.GateList = {
@@ -426,7 +425,7 @@ return(function(Installer)
 
         local RegisterAttack = Net:WaitForChild("RE/RegisterAttack")
         local RegisterHit = Net:WaitForChild("RE/RegisterHit")
-        
+
         local GunModule = Executor ~= "XENO" and fetch('Utils/GunModule.lua') or nil
 
         local Hash coroutine.wrap(function()
@@ -523,7 +522,7 @@ return(function(Installer)
             if not Equiped then return end
 
             local Name = tostring(Equiped)
-            
+
             if Equiped.ToolTip == 'Gun' and typeof(GunModule) == 'table' then
                 return GunModule:FireTarget(Equiped, Character)
             end
@@ -1033,8 +1032,8 @@ return(function(Installer)
         BodyVelocity.Parent = HumanoidRootPart
 
         local Highlight = Instance.new("Highlight") do
-            Highlight.FillColor = Color3.fromRGB(255, 255, 255)
-            Highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+            Highlight.FillColor = Color3.fromRGB(0, 255, 127)
+            Highlight.OutlineColor = Color3.fromRGB(0, 255, 127)
             Highlight.FillTransparency = 0.3
         end
 
@@ -1829,7 +1828,7 @@ return(function(Installer)
 
         function SkillModule:Use()
             if not Character then return end
-            
+
             if OnFirstTime then
                 OnFirstTime = false do
                     return Module:Equip("Melee", true) 
@@ -1871,7 +1870,7 @@ return(function(Installer)
             task.wait(0.05)
             VirtualInputManager:SendKeyEvent(false, Enum.KeyCode[SkillName], false, game)
         end
-        
+
         local function GetUnCooldownSkill(Name, Select)
             local ToolContainer = Skills:FindFirstChild(Name)
             if not ToolContainer then return nil end
@@ -1892,17 +1891,17 @@ return(function(Installer)
 
         function SkillModule:Skill(Select)
             if not Character then return end
-            
+
             if not Select or #Select == 0 then return end
 
             if tick() - LAST_SIMPLE < 0.2 then return end
 
             local Equipped = Character:FindFirstChildOfClass("Tool")
-            
+
             if not Equipped then return end
 
             local Skill = GetUnCooldownSkill(Equipped.Name, Select)
-            
+
             if not Skill then return end
 
             LAST_SIMPLE = tick()
@@ -2642,18 +2641,18 @@ return(function(Installer)
                 end,
                 Valid = function(v)
                     if not v:IsA("Model") then return false end
-                    
+
                     local Health = v:FindFirstChild("Health")
-                    
+
                     return Health ~= nil and Health.Value > 0
                 end,
                 CustomName = function(v, Dist)
                     local Health = v:FindFirstChild("Health")
-                    
+
                     if not Health then
                         return GetText("Sea Beast", Dist)
                     end
-                    
+
                     return GetText(string.format("Sea Beast [ %i ]", Health.Value), Dist)
                 end,
             },
@@ -2818,7 +2817,7 @@ return(function(Installer)
                             return Log(
                                 403,
                                 "Access denied - PlayerGui:Destroy()",
-                                "PlayerGui was locked."
+                                "PlayerGui was locked by Xynapse."
                             )
                         end
                     end
