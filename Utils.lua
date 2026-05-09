@@ -7,6 +7,7 @@ local Fallback = {}
 
 local THREAD_HASH = tostring(os.clock() + math.random()) do
     _ENV.__THREAD_HASH = THREAD_HASH
+    _ENV.GLOBALS_SETTINGS = {}
 end
 
 local function AddModule(Name, Module)
@@ -288,7 +289,7 @@ AddModule("Plugins", function()
             Title = Info[1],
             SubTitle = Info[2],
             TabWidth = Info[3] or 160,
-            Size = UDim2.fromOffset(580, 460),
+            Size = UDim2.new(0, 470, 0, 380),
             Theme = "Darker",
             MinimizeKey = Enum.KeyCode.LeftControl
         })
@@ -330,6 +331,8 @@ AddModule("Plugins", function()
                 Configurations:Save(Flag, value)
                 Enabled[Flag] = value
                 
+                _ENV.GLOBALS_SETTINGS[Flag] = value
+                
                 if value then
                     Thread = task.spawn(function()
                         if Threads[Flag] then Threads[Flag](Settings[Flag]) end
@@ -358,6 +361,8 @@ AddModule("Plugins", function()
             Callback = function(value)
                 Settings[Flag] = value
                 Configurations:Save(Flag, value)
+                
+                _ENV.GLOBALS_SETTINGS[Flag] = value
                 
                 if Callback then Callback(value) end
             end
@@ -395,6 +400,8 @@ AddModule("Plugins", function()
 
                 Settings[Flag] = Result
                 Configurations:Save(Flag, Result)
+                
+                _ENV.GLOBALS_SETTINGS[Flag] = value
 
                 if Callback then Callback(Result) end
             end,
@@ -416,7 +423,7 @@ AddModule("Plugins", function()
     end
     
     function Plugins:Input(Tabs, Info, Flag, Callback)
-        local Input = Tabs:AddInput(Flag, {
+        local Input = Tabs:AddInput("Input", {
             Title = Info[1],
             Description = Info[2],
             Placeholder = Info[3],
@@ -424,6 +431,8 @@ AddModule("Plugins", function()
             Callback = function(value)
                 Settings[Flag] = value
                 Configurations:Save(Flag, value)
+                
+                _ENV.GLOBALS_SETTINGS[Flag] = value
 
                 if Callback then Callback(value) end
             end
