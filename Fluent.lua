@@ -821,7 +821,8 @@ function Library:CreateWindow(Args)
         UIPadding_3.PaddingRight = UDim.new(0, 10)
         UIPadding_3.PaddingTop = UDim.new(0, 10)
 
-        UIListLayout_5.Parent = Scrolling_1
+		UIListLayout_5.Parent = Scrolling_1
+		UIListLayout_5.Padding = UDim.new(0, 10)
         UIListLayout_5.SortOrder = Enum.SortOrder.Name
         UIListLayout_5.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
