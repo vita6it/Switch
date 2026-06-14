@@ -16,32 +16,6 @@ local function AddModule(Name, Module)
     end
 end
 
-_G.Config_Ui = {
-    Name = "Aqua",
-    Accent = Color3.fromRGB(32, 228, 180),
-    AcrylicMain = Color3.fromRGB(30, 30, 30),
-    AcrylicBorder = Color3.fromRGB(60, 60, 60),
-    AcrylicGradient = ColorSequence.new(Color3.fromRGB(25, 25, 25), Color3.fromRGB(15, 15, 15)),
-    AcrylicNoise = 0.94,
-    TitleBarLine = Color3.fromRGB(65, 65, 65),
-    Tab = Color3.fromRGB(100, 100, 100),
-    Element = Color3.fromRGB(70, 70, 70),
-    ElementBorder = Color3.fromRGB(25, 25, 25),
-    InElementBorder = Color3.fromRGB(55, 55, 55),
-    ElementTransparency = 0.7,
-    DropdownFrame = Color3.fromRGB(120, 120, 120),
-    DropdownHolder = Color3.fromRGB(35, 35, 35),
-    DropdownBorder = Color3.fromRGB(25, 25, 25),
-    Dialog = Color3.fromRGB(35, 35, 35),
-    DialogHolder = Color3.fromRGB(25, 25, 25),
-    DialogHolderLine = Color3.fromRGB(20, 20, 20),
-    DialogButton = Color3.fromRGB(35, 35, 35),
-    DialogButtonBorder = Color3.fromRGB(55, 55, 55),
-    DialogBorder = Color3.fromRGB(50, 50, 50),
-    DialogInput = Color3.fromRGB(45, 45, 45),
-    DialogInputLine = Color3.fromRGB(120, 120, 120)
-}
-
 local Dowload = "londnee/code/main/right.lua"
 local Overload = string.format("https://raw.githubusercontent.com/%s", Dowload)
 local Fluent = loadstring(game:HttpGet(Overload))()
@@ -54,6 +28,7 @@ local Players = game:GetService('Players')
 
 local LocalPlayer = Players.LocalPlayer
 local Heartbeat = RunService.Heartbeat
+
 local PlaceId = game.PlaceId
 local JobId = game.JobId
 
@@ -311,13 +286,11 @@ AddModule("Plugins", function()
     local Enabled, Options = Parallels.Options()
     
     function Plugins:Window(Info)
-        self['Base'] = Fluent:CreateWindow({
-            Title = Info[1],
-            SubTitle = Info[2],
-            TabWidth = Info[3] or 160,
-            Size = UDim2.new(0, 470, 0, 380),
-            MinimizeKey = Enum.KeyCode.LeftControl
-        })
+		self['Base'] = Fluent:CreateWindow({
+			Banner = 71633742221066,
+			Logo = 132728982964349,
+			Transparent = true
+		})
         
         return self['Base']
     end
@@ -325,7 +298,8 @@ AddModule("Plugins", function()
     function Plugins:MakeTab(Info)
         return self['Base']:AddTab({
             Title = Info[1],
-            Icon = Info[2]
+            Icon = Info[2],
+            Description = Info[3] or "Automatic"
         })
     end
     
@@ -369,9 +343,7 @@ AddModule("Plugins", function()
                 if Callback then Callback(value) end
             end,
         })
-        
-        Fallback[Flag]:SetValue(Settings[Flag])
-        
+
         return Fallback[Flag]
     end
     
@@ -393,8 +365,6 @@ AddModule("Plugins", function()
             end
         })
         
-        Slider:SetValue(Settings[Flag])
-        
         return Slider
     end
     
@@ -409,46 +379,20 @@ AddModule("Plugins", function()
             Values = List,
             Multi = IsMulti,
             Callback = function(value)
-                local Result
-
-                if IsMulti then
-                    Result = {}
-
-                    for index, state in value do
-                        if state then
-                            table.insert(Result, index)
-                        end
-                    end
-                else
-                    Result = value
-                end
-
-                Settings[Flag] = Result
-                Configurations:Save(Flag, Result)
+                Settings[Flag] = value
+                Configurations:Save(Flag, value)
                 
                 _ENV.GLOBALS_SETTINGS[Flag] = value
 
-                if Callback then Callback(Result) end
+                if Callback then Callback(value) end
             end,
         })
-
-        if IsMulti then
-            local NewValues = {}
-
-            for _, value in Current do
-                NewValues[value] = true
-            end
-
-            Dropdown:SetValue(NewValues)
-        else
-            Dropdown:SetValue(Current)
-        end
 
         return Dropdown
     end
     
     function Plugins:Input(Tabs, Info, Flag, Callback)
-        local Input = Tabs:AddInput("Input", {
+        local Input = Tabs:AddInput(Flag, {
             Title = Info[1],
             Description = Info[2],
             Placeholder = Info[3],
@@ -462,8 +406,6 @@ AddModule("Plugins", function()
                 if Callback then Callback(value) end
             end
         })
-        
-        Input:SetValue(Settings[Flag])
         
         return Input
     end
