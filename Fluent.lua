@@ -895,7 +895,7 @@ function Library:CreateWindow(Args)
 
         local Tab = {}
 
-        function Tab:Section(Title)
+        function Tab:AddSection(Title)
             local Section = {}
             local Rows = {}
 
