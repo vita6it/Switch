@@ -92,6 +92,46 @@ function Library:Asset(rbx)
     return rbx
 end
 
+function Library:LockOption(Parent, Text)
+    local Locked_1 = Instance.new("Frame")
+    local Title_1 = Instance.new("TextLabel")
+
+    Locked_1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Locked_1.BackgroundTransparency = 0.5
+    Locked_1.Name = "Locked"
+    Locked_1.Parent = Parent
+    Locked_1.Size = UDim2.new(1, 0, 1, 0)
+    Locked_1.Selectable = false
+    Locked_1.BorderSizePixel = 0
+
+    Title_1.AnchorPoint = Vector2.new(0.5, 0.5)
+    Title_1.AutomaticSize = Enum.AutomaticSize.Y
+    Title_1.BackgroundColor3 = Color3.fromRGB(163, 162, 165)
+    Title_1.BackgroundTransparency = 1
+    Title_1.BorderColor3 = Color3.fromRGB(27, 42, 53)
+    Title_1.BorderSizePixel = 1
+    Title_1.Name = "Title"
+    Title_1.Parent = Locked_1
+    Title_1.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Title_1.Size = UDim2.new(1, 0, 0, 0)
+    Title_1.Selectable = false
+    Title_1.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+    Title_1.Text = Text or "Option has been Locked."
+    Title_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title_1.TextSize = 13
+    Title_1.TextWrapped = true
+    
+    for _, v in Parent:GetDescendants() do
+        if v:IsA("TextButton") or v:IsA("ImageButton") then
+            v.Visible = false
+        elseif v:IsA('TextBox') then
+            v.Interactable = false
+            v.ClearTextOnFocus = false
+            v.TextEditable = false
+        end
+    end
+end
+
 function Library:Rows(Parent, Args)
     local Title = Args.Title
     local Desc = Args.Desc
@@ -240,8 +280,11 @@ end
 
 function Library:CreateWindow(Args)
     local Banner = Args.Banner and Library:Asset(Args.Banner) or ""
-    local Logo = Args.Logo and Library:Asset(Args.Logo) or ""
-
+	local Logo = Args.Logo and Library:Asset(Args.Logo) or ""
+	local Fetch = Args.Fetch or function()
+		return true
+	end
+    
     local HIDDEN_PARENT = Library:Parent()
 
     local Switch_1 = Instance.new("ScreenGui")
@@ -251,7 +294,7 @@ function Library:CreateWindow(Args)
     local UIStroke_1 = Instance.new("UIStroke")
     local Shadow_1 = Instance.new("ImageLabel")
     local Pages_1 = Instance.new("Frame")
-
+    
     function Library:IsDropdownOpen()
         for _, v in pairs(Background_1:GetChildren()) do
             if v.Name == "Dropdown" and v.Visible then
@@ -274,9 +317,9 @@ function Library:CreateWindow(Args)
     Background_1.Selectable = false
     Background_1.BackgroundTransparency = Args.Transparent and 0.03 or 0
     Background_1.Visible = false
-
+    
     Library:Draggable(Background_1)
-
+    
     UICorner_1.CornerRadius = UDim.new(0, 10)
     UICorner_1.Parent = Background_1
 
@@ -307,7 +350,7 @@ function Library:CreateWindow(Args)
     Pages_1.Size = UDim2.new(1, 0, 1, 0)
     Pages_1.Selectable = false
     Pages_1.ClipsDescendants = true
-
+    
     local PageLayout = Instance.new('UIPageLayout') do
         PageLayout.TweenTime = 0.375
         PageLayout.GamepadInputEnabled = false
@@ -315,8 +358,8 @@ function Library:CreateWindow(Args)
         PageLayout.TouchInputEnabled = false
         PageLayout.Parent = Pages_1
         PageLayout.EasingStyle = Enum.EasingStyle.Exponential
-	end
-
+    end
+    
     local Inner_1 = Instance.new("ImageLabel") do
         local UICorner_1 = Instance.new("UICorner")
 
@@ -328,10 +371,10 @@ function Library:CreateWindow(Args)
         Inner_1.Size = UDim2.new(0, 500, 0, 440)
         Inner_1.Image = "rbxassetid://122898596888502"
         Inner_1.ImageColor3 = Color3.fromRGB(15, 15, 15)
-
+        
         UICorner_1.CornerRadius = UDim.new(0, 10)
         UICorner_1.Parent = Inner_1
-
+        
 
         local Lights_1 = Instance.new("Frame")
         local UIListLayout_1 = Instance.new("UIListLayout")
@@ -400,7 +443,7 @@ function Library:CreateWindow(Args)
         UIStroke_3.Transparency = 0.30000001192092896
         UIStroke_3.Parent = Frame_3
     end
-
+    
     local Home_1 = Instance.new("Frame")
     local UIListLayout_1 = Instance.new("UIListLayout")
     local Banner_1 = Instance.new("Frame")
@@ -446,7 +489,7 @@ function Library:CreateWindow(Args)
     Logo_1.Parent = Banner_1
     Logo_1.Image = Logo
     Logo_1.Size = UDim2.new(0, 100, 0 ,100)
-
+    
     UIPadding_1.Parent = Banner_1
     UIPadding_1.PaddingLeft = UDim.new(0, 20)
 
@@ -456,7 +499,7 @@ function Library:CreateWindow(Args)
     BannerImage_1.Position = UDim2.new(0.20449897646903992, 0, 0.0833333358168602, 0)
     BannerImage_1.Size = UDim2.new(0, 340, 0, 100)
     BannerImage_1.Image = Banner
-
+    
     UICorner_1.CornerRadius = UDim.new(0, 5)
     UICorner_1.Parent = BannerImage_1
 
@@ -480,7 +523,7 @@ function Library:CreateWindow(Args)
     UIListLayout_3.FillDirection = Enum.FillDirection.Horizontal
     UIListLayout_3.SortOrder = Enum.SortOrder.Name
     UIListLayout_3.Wraps = true
-
+    
     UIListLayout_3:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
         Scrolling_1.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_3.AbsoluteContentSize.Y + 15)
     end)
@@ -504,10 +547,10 @@ function Library:CreateWindow(Args)
     Horizon_1.Size = UDim2.new(1, 0, 0, 1)
     Horizon_1.Selectable = false
     Horizon_1.BackgroundTransparency = 1
-
+    
     local Window = {}
     local Transcendants = {}
-
+    
     local function TranscendantsInit()
         for Instancer, Properties in Transcendants do
             for Index, Value in Properties do
@@ -523,19 +566,20 @@ function Library:CreateWindow(Args)
             end
         end
     end
-
+    
     Window.Options = setmetatable({}, {
         __index = function(t, k)
             t[k] = { Value = nil }
             return t[k]
         end,
     })
-
+    
     function Window:AddTab(Args)
         local Title = Args.Title or "Unknow"
         local Desc = Args.Desc or "Automation"
         local Icon = Args.Icon or 72381052356914
-
+        local Template = Args.Banner or 89792855299474
+        
         local NewTab_1 = Instance.new("Frame")
         local UICorner_1 = Instance.new("UICorner")
         local UIStroke_1 = Instance.new("UIStroke")
@@ -551,14 +595,14 @@ function Library:CreateWindow(Args)
         local Title_1 = Instance.new("TextLabel")
         local Sub_1 = Instance.new("TextLabel")
         local UIPadding_1 = Instance.new("UIPadding")
-
+        
         NewTab_1.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         NewTab_1.Name = "NewTab"
         NewTab_1.Parent = Scrolling_1
         NewTab_1.BackgroundTransparency = 1
         NewTab_1.Size = UDim2.new(0, 235, 0, 60)
-        NewTab_1.Selectable = false
-        NewTab_1.BackgroundTransparency = 1
+		NewTab_1.Selectable = false
+		NewTab_1.BackgroundTransparency = 1
 
         UICorner_1.CornerRadius = UDim.new(0, 5)
         UICorner_1.Parent = NewTab_1
@@ -567,11 +611,11 @@ function Library:CreateWindow(Args)
         UIStroke_1.Thickness = 1
         UIStroke_1.Transparency = 1
         UIStroke_1.Parent = NewTab_1
-
+        
         Transcendants[UIStroke_1] = {
             ["Transparency"] = 0.95
         }
-
+        
         UICorner_2.CornerRadius = UDim.new(0, 5)
         UICorner_2.Parent = Banner_1
 
@@ -661,7 +705,7 @@ function Library:CreateWindow(Args)
 
         UIPadding_1.Parent = Text_1
         UIPadding_1.PaddingBottom = UDim.new(0, 3)
-
+        
         local NewPage_1 = Instance.new("Frame")
         local Header_1 = Instance.new("Frame")
         local Left_1 = Instance.new("Frame")
@@ -680,7 +724,7 @@ function Library:CreateWindow(Args)
         local UIListLayout_4 = Instance.new("UIListLayout")
         local Horizon_1 = Instance.new("Frame")
         local Index_1 = Instance.new("Frame")
-
+        
         local Scrolling_1 = Instance.new("ScrollingFrame")
         local UIPadding_3 = Instance.new("UIPadding")
         local UIListLayout_5 = Instance.new("UIListLayout")
@@ -690,13 +734,13 @@ function Library:CreateWindow(Args)
         NewPage_1.Parent = Pages_1
         NewPage_1.Size = UDim2.new(1, 0, 1, 0)
         NewPage_1.Selectable = false
-
+        
         Header_1.BackgroundTransparency = 1
         Header_1.Name = "Header"
         Header_1.Parent = NewPage_1
         Header_1.Size = UDim2.new(1, 0, 0, 50)
         Header_1.Selectable = false
-
+        
         Left_1.BackgroundTransparency = 1
         Left_1.Name = "Left"
         Left_1.Parent = Header_1
@@ -751,7 +795,7 @@ function Library:CreateWindow(Args)
         Asset_1.Size = UDim2.new(0, 25, 0, 25)
         Asset_1.Image = "rbxassetid://130391877219356"
         Asset_1.ImageTransparency = 0.5
-
+        
         UIPadding_1.Parent = Left_1
         UIPadding_1.PaddingLeft = UDim.new(0, 15)
 
@@ -814,36 +858,35 @@ function Library:CreateWindow(Args)
         Scrolling_1.Size = UDim2.new(1, 0, 0, 300)
         Scrolling_1.ScrollBarImageTransparency = 1
         Scrolling_1.ScrollBarThickness = 0
-
+        
         UIPadding_3.Parent = Scrolling_1
         UIPadding_3.PaddingBottom = UDim.new(0, 10)
         UIPadding_3.PaddingLeft = UDim.new(0, 10)
         UIPadding_3.PaddingRight = UDim.new(0, 10)
         UIPadding_3.PaddingTop = UDim.new(0, 10)
 
-		UIListLayout_5.Parent = Scrolling_1
-		UIListLayout_5.Padding = UDim.new(0, 10)
+        UIListLayout_5.Parent = Scrolling_1
         UIListLayout_5.SortOrder = Enum.SortOrder.Name
         UIListLayout_5.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
+        
         UIListLayout_5:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
             Scrolling_1.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_5.AbsoluteContentSize.Y + 15)
         end)
-
+        
         local ClickSelect = Library:Button(NewTab_1)
         local ClickReturn = Library:Button(Asset_1)
-
+        
         local ClickNext = Library:Button(Next_1)
         local ClickBack = Library:Button(Back_1)
-
+        
         ClickReturn.MouseButton1Click:Connect(function()
             PageLayout:JumpTo(Home_1)
         end)
-
+        
         ClickSelect.MouseButton1Click:Connect(function()
             PageLayout:JumpTo(NewPage_1)
         end)
-
+        
         local function TweenTransparency(obj, transparency)
             Library:Tween({
                 v = obj,
@@ -893,13 +936,13 @@ function Library:CreateWindow(Args)
         PageLayout:GetPropertyChangedSignal("CurrentPage"):Connect(UpdateNavButtons)
 
         UpdateNavButtons()
-
+        
         local Tab = {}
-
-        function Tab:AddSection(Title)
+        
+        function Tab:Section(Title)
             local Section = {}
             local Rows = {}
-
+            
             local Section_1 = Instance.new("Frame")
             local UIStroke_1 = Instance.new("UIStroke")
             local UICorner_1 = Instance.new("UICorner")
@@ -971,18 +1014,18 @@ function Library:CreateWindow(Args)
             Pattern_1.ImageContent = Content.fromUri("rbxassetid://104439856523286")
             Pattern_1.ImageTransparency = 0.30000001192092896
             Pattern_1.ScaleType = Enum.ScaleType.Crop
-
+            
             function Section:AddParagraph(Info)
                 local Title = Info.Title
-                local Desc = Info.Description or Info.Content
+                local Desc = Info.Description
                 local Icon = Info.Icon
                 local Text = Info.Text
 
                 local Template = Library:Rows(Section_1, { Title = Title, Desc = Desc })
                 table.insert(Rows, Template)
                 Library:UpdateLine(Rows)
-
-
+                
+                
 
                 if Icon then
                     Library:Create("ImageLabel", {
@@ -1021,13 +1064,13 @@ function Library:CreateWindow(Args)
                 if Text and Icon then
                     Template.Right.UIListLayout.Padding = UDim.new(0, 10)
                 end
-
+                
                 function Template:SetDesc( ... )
                     if Desc then
                         Template.Desc.Text = tostring( ... ) 
                     end
                 end
-
+                
                 function Template:SetTitle( ... )
                     Template.Title.Text = tostring( ... )
                 end
@@ -1040,7 +1083,7 @@ function Library:CreateWindow(Args)
                 local Desc = Info.Description
                 local Value = Info.Default
                 local Callback = Info.Callback
-
+                
                 local Template = Library:Rows(Section_1, { Title = Title, Desc = Desc })
                 table.insert(Rows, Template)
                 Library:UpdateLine(Rows)
@@ -1123,6 +1166,12 @@ function Library:CreateWindow(Args)
                     Click.MouseButton1Click:Connect(Init)
                     Window.Options[Flag].Value = Value
                     OnChanged(Value)
+                end
+                
+                local Lock = Info.IsLocked or nil
+
+                if Lock then
+                    Library:LockOption(Template.Template, Lock)
                 end
 
                 return Template
@@ -1225,6 +1274,12 @@ function Library:CreateWindow(Args)
 
                 table.insert(Rows, Template)
                 Library:UpdateLine(Rows)
+                
+                local Lock = Info.IsLocked or nil
+
+                if Lock then
+                    Library:LockOption(Template.Template, Lock)
+                end
 
                 return Template
             end
@@ -1287,12 +1342,18 @@ function Library:CreateWindow(Args)
                         Window.Options[Flag].Value = Text
                         if Callback then Callback(Text) end
                     end)
-
+                    
                     Window.Options[Flag].Value = Text
                 end
 
                 table.insert(Rows, Template)
                 Library:UpdateLine(Rows)
+                
+                local Lock = Info.IsLocked or false
+
+                if Lock then
+                    Library:LockOption(Template.Template)
+                end
 
                 return Template
             end
@@ -1458,6 +1519,12 @@ function Library:CreateWindow(Args)
 
                 table.insert(Rows, Template)
                 Library:UpdateLine(Rows)
+                
+                local Lock = Info.IsLocked or nil
+
+                if Lock then
+                    Library:LockOption(Template.Template, Lock)
+                end
 
                 return Template
             end
@@ -1817,7 +1884,7 @@ function Library:CreateWindow(Args)
                                 end
                             end
                         end)
-
+                        
                         Window.Options[Flag].Value = Name
 
                         Click.MouseButton1Click:Connect(OnSelected)
@@ -1839,32 +1906,22 @@ function Library:CreateWindow(Args)
 
                 table.insert(Rows, Template)
                 Library:UpdateLine(Rows)
+                
+                local Lock = Info.IsLocked or nil
+
+                if Lock then
+                    Library:LockOption(Template.Template, Lock)
+                end
 
                 return Template
             end
 
             return Section
         end
-
+        
         return Tab
     end
-
-	function Window:SelectTab(Index)
-		if Index == 'Home' then
-			return PageLayout:JumpTo(Home_1)
-		end
-		
-		local Counter = {}
-		
-		for Index, Instancer in Pages_1:GetChildren() do
-			if Instancer.Name == 'NewPage' then
-				Counter[Index] = Instancer
-			end
-		end
-		
-		PageLayout:JumpTo(Counter[Index])
-	end
-
+    
     do
         local ToggleScreen = Library:Create("ScreenGui", {
             Name = "Switch Pillow",
@@ -1925,7 +1982,7 @@ function Library:CreateWindow(Args)
                 holdingSpace = false
             end
         end)
-
+        
         local StartBackground: Tween = Library:Tween({
             v = Background_1,
             t = 0.75,
@@ -1935,7 +1992,7 @@ function Library:CreateWindow(Args)
                 Size = UDim2.new(0, 500, 0, 360)
             }
         })
-
+        
         StartBackground.Completed:Once(function()
             delay(0.1, function()
                 Library:Tween({
@@ -1952,8 +2009,11 @@ function Library:CreateWindow(Args)
                 TranscendantsInit()
             end)
         end)
-
+        
         do
+            local TweenService = game:GetService("TweenService")
+            local RunService   = game:GetService("RunService")
+
             local CFG = {
                 FALL_TIME     = 0.75,
                 SPIN_TIME     = 2.2,
@@ -2072,7 +2132,7 @@ function Library:CreateWindow(Args)
                     task.delay(delay, function()
                         animateDot(parent, snapshot[i], xScale, onOneDone)
                     end)
-
+                    
                     task.wait(0.10)
                 end
             end
@@ -2097,18 +2157,22 @@ function Library:CreateWindow(Args)
                     return Frame
                 end)
             end
-
+            
             Background_1.Position = UDim2.new(-0.5, 0 ,0.5 ,0)
-
-            task.delay(RunService:IsStudio() and 6 or 0.5, function()
+            
+            task.delay(RunService:IsStudio() and 3 or 0.1, function()
                 CreateDot(Color3.fromRGB(40, 200, 64))   -- Green
                 CreateDot(Color3.fromRGB(254, 188, 46))  -- Yellow
-                CreateDot(Color3.fromRGB(255, 95, 87))   -- Red
+				CreateDot(Color3.fromRGB(255, 95, 87))   -- Red
+				
+				repeat
+					task.wait(0.1)
+				until Fetch()
 
                 BoundStart(Switch_1, function()
                     Background_1.Visible = true
                     ToggleScreen.Enabled = true
-
+                    
                     local TweenS = Library:Tween({
                         v = Background_1,
                         t = 0.5,
@@ -2118,19 +2182,19 @@ function Library:CreateWindow(Args)
                             Position = UDim2.new(0.5, 0 ,0.5 ,0)
                         }
                     })
-
+                    
                     TweenS.Completed:Connect(function()
                         task.delay(1, function()
                             StartBackground:Play()
                         end)
                     end)
-
+                    
                     TweenS:Play()
                 end)
             end)
         end
     end
-
+    
     return Window
 end
 
