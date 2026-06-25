@@ -867,6 +867,7 @@ function Library:CreateWindow(Args)
 
         UIListLayout_5.Parent = Scrolling_1
         UIListLayout_5.SortOrder = Enum.SortOrder.Name
+		UIListLayout_5.Padding = UDim.new(0, 10)
         UIListLayout_5.HorizontalAlignment = Enum.HorizontalAlignment.Center
         
         UIListLayout_5:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
@@ -1017,7 +1018,7 @@ function Library:CreateWindow(Args)
             
             function Section:AddParagraph(Info)
                 local Title = Info.Title
-                local Desc = Info.Description
+                local Desc = Info.Description or Info.Content
                 local Icon = Info.Icon
                 local Text = Info.Text
 
