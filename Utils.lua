@@ -285,6 +285,30 @@ AddModule("Plugins", function()
 
     local Enabled, Options = Parallels.Options()
     
+    local function Locked(Seas)
+        if typeof(Seas) ~= "table" then
+            return nil
+        end
+
+        local sea1 = table.find(Seas, 1)
+        local sea2 = table.find(Seas, 2)
+        local sea3 = table.find(Seas, 3)
+
+        if sea1 and sea2 and sea3 then
+            return nil
+        elseif sea2 and sea3 then
+            return "ใช้ได้เฉพาะทะเลที่ 2 หรือ 3"
+        elseif sea3 then
+            return "ใช้ได้เฉพาะทะเลที่ 3"
+        elseif sea2 then
+            return "ใช้ได้เฉพาะทะเลที่ 2"
+        elseif sea1 then
+            return "ใช้ได้เฉพาะทะเลที่ 1"
+        end
+
+        return nil
+    end
+    
     function Plugins:Window(Info)
 		self['Base'] = Fluent:CreateWindow({
 			Banner = 71633742221066,
@@ -310,20 +334,22 @@ AddModule("Plugins", function()
         })
     end
     
-    function Plugins:Button(Tab, Info, Callback)
+    function Plugins:Button(Tab, Info, Callback, Seas)
         return Tab:AddButton({
             Title = Info[1],
+            IsLocked = Locked(Seas),
             Description = Info[2],
             Callback = Callback
         })
     end
     
-    function Plugins:Toggle(Tab, Info, Flag, Callback)
+    function Plugins:Toggle(Tab, Info, Flag, Callback, Seas)
         local Thread = nil
         
         Fallback[Flag] = Tab:AddToggle(Flag, {
             Title = Info[1],
             Description = Info[2],
+            IsLocked = Locked(Seas),
             Default = Settings[Flag],
             Callback = function(value)
                 Settings[Flag] = value
@@ -347,11 +373,12 @@ AddModule("Plugins", function()
         return Fallback[Flag]
     end
     
-    function Plugins:Slider(Tab, Info, Values, Flag, Callback)
+    function Plugins:Slider(Tab, Info, Values, Flag, Callback, Seas)
         local Slider = Tab:AddSlider(Flag, {
             Title = Info[1],
             Description = Info[2],
             Default = Settings[Flag],
+            IsLocked = Locked(Seas),
             Min = Values[1],
             Max = Values[2],
             Rounding = Values[3] or 0,
@@ -368,7 +395,7 @@ AddModule("Plugins", function()
         return Slider
     end
     
-    function Plugins:Dropdown(Tabs, Info, List, Flag, Callback)
+    function Plugins:Dropdown(Tabs, Info, List, Flag, Callback, Seas)
         local Current = Settings[Flag]
         local IsMulti = typeof(Current) == 'table'
 
@@ -376,6 +403,7 @@ AddModule("Plugins", function()
             Title = Info[1],
             Description = Info[2],
             Default = Current,
+            IsLocked = Locked(Seas),
             Values = List,
             Multi = IsMulti,
             Callback = function(value)
@@ -391,11 +419,12 @@ AddModule("Plugins", function()
         return Dropdown
     end
     
-    function Plugins:Input(Tabs, Info, Flag, Callback)
+    function Plugins:Input(Tabs, Info, Flag, Callback, Seas)
         local Input = Tabs:AddInput(Flag, {
             Title = Info[1],
             Description = Info[2],
             Placeholder = Info[3],
+            IsLocked = Locked(Seas),
             Default = Settings[Flag],
             Callback = function(value)
                 Settings[Flag] = value
