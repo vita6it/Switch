@@ -284,30 +284,38 @@ AddModule("Plugins", function()
     local Parallels = Utils.Parallels
 
     local Enabled, Options = Parallels.Options()
-    
-    local function Locked(Seas)
-        if typeof(Seas) ~= "table" then
-            return nil
-        end
 
-        local sea1 = table.find(Seas, 1)
-        local sea2 = table.find(Seas, 2)
-        local sea3 = table.find(Seas, 3)
+    local SeaIndex = (function()
+    local Current = workspace:GetAttribute("MAP")
 
-        if sea1 and sea2 and sea3 then
-            return nil
-        elseif sea2 and sea3 then
-            return "ใช้ได้เฉพาะทะเลที่ 2 หรือ 3"
-        elseif sea3 then
-            return "ใช้ได้เฉพาะทะเลที่ 3"
-        elseif sea2 then
-            return "ใช้ได้เฉพาะทะเลที่ 2"
-        elseif sea1 then
-            return "ใช้ได้เฉพาะทะเลที่ 1"
-        end
+    if Current == "Sea1" then
+        return 1
+    elseif Current == "Sea2" then
+        return 2
+    elseif Current == "Sea3" then
+        return 3
+    end
 
+    return 1
+end)()
+
+local function Locked(Seas)
+    if typeof(Seas) ~= "table" then
         return nil
     end
+
+    if table.find(Seas, SeaIndex) then
+        return nil
+    end
+
+    local Names = {}
+
+    for _, Sea in ipairs(Seas) do
+        table.insert(Names, tostring(Sea))
+    end
+
+    return "ใช้ได้เฉพาะทะเลที่ " .. table.concat(Names, " หรือ ")
+end
     
     function Plugins:Window(Info)
 		self['Base'] = Fluent:CreateWindow({
